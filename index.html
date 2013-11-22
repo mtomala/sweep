@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <script type="text/javascript" src="js/struct.js" ></script>
+    <script type="text/javascript" src="js/math.js" ></script>
+    <script type="text/javascript" src="js/draw.js" ></script>
+    <script type="text/javascript" src="js/logic.js" ></script>
+    <!--<script type="text/javascript" src="stuck.js" ></script>-->
+    <!--<script type="text/javascript" src="keyEvents.js" ></script>-->
+    <script type="text/javascript" >
+        var eventTarget = null;
+
+        function init() {
+            eventTarget = new Controller('drawer');
+
+        }
+
+
+
+        function addLines(num) {
+            if (eventTarget) {
+                eventTarget.addRandomLines(num);
+                console.log(eventTarget);
+            }
+        }
+
+        function findCrossings() {
+            if (eventTarget) {
+                eventTarget.findCrossingLines();
+                //console.log(eventTarget);
+            }
+        }
+
+
+    </script>
+    <style>
+        .border-box {
+            border: 1px solid #888888;
+            border-radius: 5px;
+            float: left;
+            margin: 6px 6px 0 0;
+        }
+        .border-box .title {
+            /*margin: 5px;*/
+            background: #888888;
+            padding: 4px;
+            font-weight: bold;
+            color: #eeeeee;
+        }
+        .border-box .content {
+            padding: 5px;
+        }
+        #drawer {
+            display: block;
+        }
+    </style>
+
+</head>
+<body onload="init();">
+    <canvas id="drawer" width="800" height="500"></canvas>
+    <div class="border-box">
+        <div class="title">Lines</div>
+        <div class="content">
+            <button onclick="addLines(1)">ADD 1 line</button>
+            <button onclick="addLines(10)">ADD 10 lines</button>
+            <button onclick="addLines(50)">ADD 50 lines</button>
+        </div>
+    </div>
+    <div class="border-box">
+        <div class="title">Find crossing points</div>
+        <div class="content">
+            <button onclick="findCrossings()">FIND</button>
+        </div>
+    </div>
+</body>
+
+</html>
