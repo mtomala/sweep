@@ -55,6 +55,7 @@ Controller.prototype.findCrossingLines = function()
 
     var S = this._SweepPoints;
     var nearLines = [];
+    var newNearLines = [];
     var keys = [];
     var profiler = 0;
 
@@ -79,15 +80,18 @@ Controller.prototype.findCrossingLines = function()
         pos = keys[k];
 
         //console.log('checking sweep point at ', pos);
-
+        newNearLines = [];
         for (var i=0; i< S[pos].l.length; i++) {
+            newNearLines.push(S[pos].l[i]);
             nearLines.push(S[pos].l[i]);
             //console.log('pushing line ', (S[pos].l[i]));
         }
 
         //console.log('nearlines: ', nearLines.length);
         // tu sprawdzamy przeciecia
-        profiler += this.checkNearLines(nearLines);
+        if (newNearLines.length > 0) {
+            profiler += this.checkNearLines(newNearLines, nearLines);
+        }
 
         for (var j=0; j< S[pos].r.length; j++) {
             id = nearLines.indexOf(S[pos].r[j]);
@@ -134,7 +138,7 @@ Controller.prototype.addRandomLines = function( count )
     return this;
 };
 
-Controller.prototype.checkNearLines = function(nearLines)
+Controller.prototype.checkNearLines = function(newNearLines,  nearLines)
 {
     var C = this._canvas;
     var L = this._lines;
@@ -145,10 +149,13 @@ Controller.prototype.checkNearLines = function(nearLines)
     var profiler = 0;
 
     if ( nearLines.length>1 ) {
-        while (nearLines.length>s) {
-            l1 = nearLines[s];
+        while (newNearLines.length>s) {
+            l1 = newNearLines[s];
             s++;
-            for (var i=s; i<nearLines.length; i++) {
+            for (var i=0; i<nearLines.length; i++) {
+                if (l1 == nearLines[i]) {
+                    continue;
+                }
                 ret = this.getCrossingPoint(L[l1], L[nearLines[i]]);
                 profiler ++;
                 if (ret) {
