@@ -52,13 +52,12 @@ Controller.prototype.repaint = function()
 
 Controller.prototype.findCrossingLines = function()
 {
-    var C = this._canvas;
-    var L = this._lines;
+
     var S = this._SweepPoints;
     var nearLines = [];
     var keys = [];
 
-    console.log('Sweep map: ', S);
+    //console.log('Sweep map: ', S);
 
     var id;
 
@@ -78,30 +77,31 @@ Controller.prototype.findCrossingLines = function()
 
         pos = keys[k];
 
-        console.log('checking sweep point at ', pos);
+        //console.log('checking sweep point at ', pos);
 
         for (var i=0; i< S[pos].l.length; i++) {
             nearLines.push(S[pos].l[i]);
-            console.log('pushing line ', (S[pos].l[i]));
+            //console.log('pushing line ', (S[pos].l[i]));
         }
 
-        console.log('nearlines', nearLines);
+        //console.log('nearlines: ', nearLines.length);
         // tu sprawdzamy przeciecia
+        this.checkNearLines(nearLines);
 
         for (var j=0; j< S[pos].r.length; j++) {
             id = nearLines.indexOf(S[pos].r[j]);
             if (id > -1) {
                 nearLines.splice(id, 1);
-                console.log('dropping line ', (S[pos].r[j]));
+                //console.log('dropping line ', (S[pos].r[j]));
             }
             else {
-                console.log('jakis blad');
+                //console.log('jakis blad');
             }
         }
 
     }
 
-
+    console.log('DONE');
     return this;
 };
 
@@ -126,6 +126,58 @@ Controller.prototype.addRandomLines = function( count )
         this.repaint();
     }
     return this;
+};
+
+Controller.prototype.checkNearLines = function(nearLines)
+{
+    var C = this._canvas;
+    var L = this._lines;
+    var l1;
+    var ret;
+    var s = 0;
+
+    if ( nearLines.length>1 ) {
+        while (nearLines.length>s) {
+            l1 = nearLines[s];
+            s++;
+            for (var i=s; i<nearLines.length; i++) {
+                ret = this.getCrossingPoint(L[l1], L[nearLines[i]]);
+                if (ret) {
+                    C.drawPoint(ret[0], ret[1],5,'#ff0000');
+                    //console.log('drawDot: ', ret[0], ret[1]);
+                }
+            }
+        }
+
+    }
+};
+
+Controller.prototype.getCrossingPoint = function(A, B)
+{
+    var x1 = A[0];
+    var y1 = A[1];
+    var x2 = A[2];
+    var y2 = A[3];
+    var x3 = B[0];
+    var y3 = B[1];
+    var x4 = B[2];
+    var y4 = B[3];
+
+    var d = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+    if (d == 0) {
+        return false;
+    }
+    else {
+        var x = ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
+        var y = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
+        if ( y < Math.min(y1,y2) || y > Math.max(y1,y2)) return false;
+        if ( y < Math.min(y3,y4) || y > Math.max(y3,y4)) return false;
+        if ( x < Math.min(x1,x2) || x > Math.max(x1,x2)) return false;
+        if ( x < Math.min(x3,x4) || x > Math.max(x3,x4)) return false;
+        return [x,y];
+    }
+    return false;
+
 };
 
 function activateCanvas(canvasId)
