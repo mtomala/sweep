@@ -62,7 +62,7 @@ Controller.prototype.findCrossingLines = function()
 
     //var startTime = this.date.getTime();
     //console.log('Start: ', startTime);
-    console.time('Crossing time');
+    console.time('Crossing time - sweep');
 
     var id;
 
@@ -110,7 +110,7 @@ Controller.prototype.findCrossingLines = function()
     }
 
     //console.log('DONE', this.date.getTime() - startTime);
-    console.timeEnd('Crossing time');
+    console.timeEnd('Crossing time - sweep');
     console.log('sprawdzono', profiler, 'punktow');
     return this;
 };
@@ -125,11 +125,11 @@ Controller.prototype.findCrossingLinesSlow = function()
         I.push(i);
     }
 
-    console.time('Crossing time');
+    console.time('Crossing time - normal');
 
     profiler += this.checkNearLines(I, I, true);
 
-    console.timeEnd('Crossing time');
+    console.timeEnd('Crossing time - normal');
     console.log('sprawdzono', profiler, 'punktow');
     return this;
 };
