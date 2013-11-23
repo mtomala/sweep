@@ -59,7 +59,10 @@ Controller.prototype.findCrossingLines = function()
     var keys = [];
     var profiler = 0;
 
-    console.log('Start: ', Date.now());
+
+    //var startTime = this.date.getTime();
+    //console.log('Start: ', startTime);
+    console.time('Crossing time');
 
     var id;
 
@@ -106,7 +109,8 @@ Controller.prototype.findCrossingLines = function()
 
     }
 
-    console.log('DONE', Date.now());
+    //console.log('DONE', this.date.getTime() - startTime);
+    console.timeEnd('Crossing time');
     console.log('sprawdzono', profiler, 'punktow');
     return this;
 };
@@ -159,7 +163,7 @@ Controller.prototype.checkNearLines = function(newNearLines,  nearLines)
                 ret = this.getCrossingPoint(L[l1], L[nearLines[i]]);
                 profiler ++;
                 if (ret) {
-                    C.drawPoint(ret[0], ret[1],5,'#ff0000');
+                    //C.drawPoint(ret[0], ret[1],3,"rgba(255,0,0,0.4)");
                     //console.log('drawDot: ', ret[0], ret[1]);
                 }
             }
