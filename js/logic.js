@@ -56,8 +56,9 @@ Controller.prototype.findCrossingLines = function()
     var S = this._SweepPoints;
     var nearLines = [];
     var keys = [];
+    var profiler = 0;
 
-    //console.log('Sweep map: ', S);
+    console.log('Start: ', Date.now());
 
     var id;
 
@@ -86,7 +87,7 @@ Controller.prototype.findCrossingLines = function()
 
         //console.log('nearlines: ', nearLines.length);
         // tu sprawdzamy przeciecia
-        this.checkNearLines(nearLines);
+        profiler += this.checkNearLines(nearLines);
 
         for (var j=0; j< S[pos].r.length; j++) {
             id = nearLines.indexOf(S[pos].r[j]);
@@ -101,7 +102,8 @@ Controller.prototype.findCrossingLines = function()
 
     }
 
-    console.log('DONE');
+    console.log('DONE', Date.now());
+    console.log('sprawdzono', profiler, 'punktow');
     return this;
 };
 
@@ -109,9 +111,13 @@ Controller.prototype.addRandomLine = function()
 {
     var C = this._canvas.getCanvas();
     var x1 = (Math.random() * C.canvas.width);
-    var x2 = (Math.random() * C.canvas.width);
     var y1 = (Math.random() * C.canvas.height);
-    var y2 = (Math.random() * C.canvas.height);
+
+    var x2 = (Math.random() * 200 - 100 + x1);
+    var y2 = (Math.random() * 200 - 100 + y1);
+
+    //var x2 = (Math.random() * C.canvas.width);
+    //var y2 = (Math.random() * C.canvas.height);
     this.addLine(x1,y1,x2,y2);
     return this;
 };
@@ -136,12 +142,15 @@ Controller.prototype.checkNearLines = function(nearLines)
     var ret;
     var s = 0;
 
+    var profiler = 0;
+
     if ( nearLines.length>1 ) {
         while (nearLines.length>s) {
             l1 = nearLines[s];
             s++;
             for (var i=s; i<nearLines.length; i++) {
                 ret = this.getCrossingPoint(L[l1], L[nearLines[i]]);
+                profiler ++;
                 if (ret) {
                     C.drawPoint(ret[0], ret[1],5,'#ff0000');
                     //console.log('drawDot: ', ret[0], ret[1]);
@@ -150,6 +159,7 @@ Controller.prototype.checkNearLines = function(nearLines)
         }
 
     }
+    return profiler;
 };
 
 Controller.prototype.getCrossingPoint = function(A, B)
