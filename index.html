@@ -32,7 +32,12 @@
             }
         }
 
-
+        function findCrossingsSlow() {
+            if (eventTarget) {
+                eventTarget.findCrossingLinesSlow();
+                //console.log(eventTarget);
+            }
+        }
     </script>
     <style>
         .border-box {
@@ -71,7 +76,8 @@
     <div class="border-box">
         <div class="title">Find crossing points</div>
         <div class="content">
-            <button onclick="findCrossings()">FIND</button>
+            <button onclick="findCrossings()">SWEEP FIND</button>
+            <button onclick="findCrossingsSlow()">FIND (compare all)</button>
         </div>
     </div>
 </body>

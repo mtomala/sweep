@@ -115,6 +115,25 @@ Controller.prototype.findCrossingLines = function()
     return this;
 };
 
+Controller.prototype.findCrossingLinesSlow = function()
+{
+    var profiler = 0;
+    var L = this._lines;
+    var I = [];
+
+    for (var i=0; i< L.length; i++) {
+        I.push(i);
+    }
+
+    console.time('Crossing time');
+
+    profiler += this.checkNearLines(I, I, true);
+
+    console.timeEnd('Crossing time');
+    console.log('sprawdzono', profiler, 'punktow');
+    return this;
+};
+
 Controller.prototype.addRandomLine = function()
 {
     var C = this._canvas.getCanvas();
@@ -142,13 +161,14 @@ Controller.prototype.addRandomLines = function( count )
     return this;
 };
 
-Controller.prototype.checkNearLines = function(newNearLines,  nearLines)
+Controller.prototype.checkNearLines = function(newNearLines,  nearLines, all)
 {
     var C = this._canvas;
     var L = this._lines;
     var l1;
     var ret;
-    var s = 0;
+    var s = 0, s2 = 0;
+    var a = all || false;
 
     var profiler = 0;
 
@@ -156,14 +176,22 @@ Controller.prototype.checkNearLines = function(newNearLines,  nearLines)
         while (newNearLines.length>s) {
             l1 = newNearLines[s];
             s++;
-            for (var i=0; i<nearLines.length; i++) {
+            if (a)
+                s2++;
+            for (var i=s2; i<nearLines.length; i++) {
                 if (l1 == nearLines[i]) {
                     continue;
                 }
                 ret = this.getCrossingPoint(L[l1], L[nearLines[i]]);
                 profiler ++;
                 if (ret) {
-                    //C.drawPoint(ret[0], ret[1],3,"rgba(255,0,0,0.4)");
+                    if (a) {
+                        C.drawPoint(ret[0], ret[1],3,"rgba(0,255,0,0.4)");
+                    }
+                    else {
+                        C.drawPoint(ret[0], ret[1],3,"rgba(255,0,0,0.4)");
+                    }
+
                     //console.log('drawDot: ', ret[0], ret[1]);
                 }
             }
@@ -184,6 +212,13 @@ Controller.prototype.getCrossingPoint = function(A, B)
     var x4 = B[2];
     var y4 = B[3];
 
+    if (y1>y3 && y1>y4 && y2>y3 && y2>y4 ) {
+        return false;
+    }
+    if (y1<y3 && y1<y4 && y2<y3 && y2<y4 ) {
+        return false;
+    }
+
     var d = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
     if (d == 0) {
         return false;
@@ -191,10 +226,10 @@ Controller.prototype.getCrossingPoint = function(A, B)
     else {
         var x = ((x3-x4)*(x1*y2-y1*x2)-(x1-x2)*(x3*y4-y3*x4))/d;
         var y = ((y3-y4)*(x1*y2-y1*x2)-(y1-y2)*(x3*y4-y3*x4))/d;
-        if ( y < Math.min(y1,y2) || y > Math.max(y1,y2)) return false;
-        if ( y < Math.min(y3,y4) || y > Math.max(y3,y4)) return false;
-        if ( x < Math.min(x1,x2) || x > Math.max(x1,x2)) return false;
-        if ( x < Math.min(x3,x4) || x > Math.max(x3,x4)) return false;
+        if ( ( y < y1 && y < y2 ) || ( y > y1 && y > y2) ) return false;
+        if ( ( y < y3 && y < y4 ) || ( y > y3 && y > y4) ) return false;
+        if ( ( x < x1 && x < x2 ) || ( x > x1 && x > x2) ) return false;
+        if ( ( x < x3 && x < x4 ) || ( x > x3 && x > x4) ) return false;
         return [x,y];
     }
     return false;
